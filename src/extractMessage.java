@@ -8,8 +8,19 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
 public class extractMessage {
+
+    private JSONObject js;
+
+    public extractMessage(String filename) {
+        try {
+            js = (JSONObject) new JSONParser().parse(new FileReader(filename));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /* Get the JSON object and a string type (ex: participants, massages,...) */
-    public static void getParticipants(JSONObject js, String value) {
+    public void getParticipants(String value) {
         JSONArray participants = (JSONArray) js.get(value);
         Iterator itr = participants.iterator();
 
@@ -24,16 +35,7 @@ public class extractMessage {
 
     /* main method */
     public static void main(String[] args) {
-        Object obj = null;
-        try {
-            obj = new JSONParser().parse(new FileReader(args[0]));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        JSONObject js = (JSONObject) obj;
-
-        getParticipants(js, "messages");
+        extractMessage eM = new extractMessage(args[0]);
+        eM.getParticipants("messages");
     }
 }
