@@ -32,7 +32,6 @@ public class extractMessage {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         JSONObject js = (JSONObject) obj;
 
         getParticipants(js, "messages");
