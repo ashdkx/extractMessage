@@ -9,8 +9,10 @@ import org.json.simple.parser.*;
 
 public class extractMessage {
 
+    /* JSON object */
     private JSONObject js;
 
+    /* The constructor */
     public extractMessage(String filename) {
         try {
             js = (JSONObject) new JSONParser().parse(new FileReader(filename));
@@ -20,7 +22,7 @@ public class extractMessage {
     }
 
     /* Get the JSON object and a string type (ex: participants, massages,...) */
-    public void getParticipants(String value) {
+    public void getMessages(String value) {
         JSONArray participants = (JSONArray) js.get(value);
         Iterator itr = participants.iterator();
 
@@ -36,6 +38,6 @@ public class extractMessage {
     /* main method */
     public static void main(String[] args) {
         extractMessage eM = new extractMessage(args[0]);
-        eM.getParticipants("messages");
+        eM.getMessages("messages");
     }
 }
