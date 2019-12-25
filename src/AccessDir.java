@@ -23,7 +23,7 @@ public class AccessDir {
     /*
     Go into a specific file in the directory and return the contents of "message_1.json"
      */
-    public extractMessage getContent(Path dir) {
+    public extractMessage getContentFromInbox(Path dir) {
         extractMessage eM = null;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
             for (Path file : stream) {
@@ -43,7 +43,7 @@ public class AccessDir {
     }
 
     public String getDirName (int dirIdx) {
-        String dirName = dirNames.get(1).toString();
+        String dirName = dirNames.get(dirIdx).toString();
         return dirName;
     }
 

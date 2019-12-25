@@ -4,6 +4,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigestSpi;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
 public class extractMessage {
+    private static final String MESSAGES = "messages";
 
     /* JSON object */
     private JSONObject js;
@@ -42,9 +44,9 @@ public class extractMessage {
     /* main method */
     public static void main(String[] args) {
         AccessDir newDir = new AccessDir("");
-        Path dir = Paths.get(newDir.getDirName(1));
+        Path dir = Paths.get(newDir.getDirName(0));
         //go into a specific dir and get the content from "message_1.json"
-        extractMessage em = newDir.getContent(dir);
-        em.getMessages("messages");
+        extractMessage em = newDir.getContentFromInbox(dir);
+        em.getMessages(MESSAGES);
     }
 }
