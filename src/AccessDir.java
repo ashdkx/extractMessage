@@ -9,6 +9,10 @@ import java.util.List;
 public class AccessDir {
     private ArrayList dirNames = new ArrayList();
 
+    /**
+     * The constructor
+     * @param input
+     */
     public AccessDir (String input) {
         Path dir = Paths.get(input);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
@@ -20,8 +24,10 @@ public class AccessDir {
         };
     }
 
-    /*
-    Go into a specific file in the directory and return the contents of "message_1.json"
+    /**
+     * Go into a specific file in the directory and return the contents of "message_1.json"
+     * @param dir
+     * @return
      */
     public extractMessage getContentFromInbox(Path dir) {
         extractMessage eM = null;
@@ -42,15 +48,29 @@ public class AccessDir {
         return eM;
     }
 
+    /**
+     * Get directory name from index
+     * @param dirIdx
+     * @return
+     */
     public String getDirName (int dirIdx) {
         String dirName = dirNames.get(dirIdx).toString();
         return dirName;
     }
 
+    /**
+     * If the directory contains a directory or file
+     * @param dirName
+     * @return
+     */
     public boolean containsDir (String dirName) {
         return dirName.contains(dirName);
     }
 
+    /**
+     * Get the first ten directories
+     * @return
+     */
     public ArrayList firstTen() {
         ArrayList ten = new ArrayList();
         for (int i = 0; i < 10; i++) {

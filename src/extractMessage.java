@@ -18,7 +18,10 @@ public class extractMessage {
     /* JSON object */
     private JSONObject js;
 
-    /* The constructor */
+    /**
+     * The constructor
+     * @param filename
+     */
     public extractMessage(String filename) {
         try {
             js = (JSONObject) new JSONParser().parse(new FileReader(filename));
@@ -27,7 +30,10 @@ public class extractMessage {
         }
     }
 
-    /* Get the JSON object and a string type (ex: participants, massages,...) */
+    /**
+     * Get the JSON object and a string type (ex: participants, massages,...)
+     * @param value
+     */
     public void getMessages(String value) {
         JSONArray participants = (JSONArray) js.get(value);
         Iterator itr = participants.iterator();
@@ -41,7 +47,10 @@ public class extractMessage {
         }
     }
 
-    /* main method */
+    /**
+     * The main method
+     * @param args
+     */
     public static void main(String[] args) {
         AccessDir newDir = new AccessDir("");
         Path dir = Paths.get(newDir.getDirName(0));
