@@ -82,4 +82,8 @@ public class AccessDir {
     public ArrayList getDir () {
         return dirNames;
     }
+
+    public int length() {
+        return dirNames.size();
+    }
 }

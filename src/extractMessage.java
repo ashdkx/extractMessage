@@ -1,12 +1,10 @@
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigestSpi;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -14,6 +12,8 @@ import org.json.simple.parser.*;
 
 public class extractMessage {
     private static final String MESSAGES = "messages";
+    private String aMessage;
+    private Map<String, Integer> wordFreq;
 
     /* JSON object */
     private JSONObject js;
@@ -23,6 +23,7 @@ public class extractMessage {
      * @param filename
      */
     public extractMessage(String filename) {
+        wordFreq = new TreeMap<>();
         try {
             js = (JSONObject) new JSONParser().parse(new FileReader(filename));
         } catch (Exception e) {
@@ -39,11 +40,38 @@ public class extractMessage {
         Iterator itr = participants.iterator();
 
         for (int i = 0; i < participants.size(); i++) {
-            Iterator<Map.Entry> iter = ((Map) itr.next()).entrySet().iterator();
+            Iterator<Entry> iter = ((Map) itr.next()).entrySet().iterator();
             while (iter.hasNext()) {
-                Map.Entry pair = iter.next();
-                System.out.println(pair.getKey() + " : " + pair.getValue());
+                Entry pair = iter.next();
+                if (pair.getKey().equals("content") ) {
+                    aMessage = (String) pair.getValue();
+                    getFreq(aMessage);
+                }
             }
+        }
+    }
+
+    /**
+     * Assign the words and its frequency into a TreeMap by String : Value
+     * @param input
+     */
+    public void getFreq(String input) {
+        String[] brokeUpString = input.split(" ");
+        for (String word: brokeUpString) {
+            if (wordFreq.containsKey(word)) {
+                wordFreq.replace(word, wordFreq.get(word), wordFreq.get(word) +1);
+            } else {
+                wordFreq.put(word, 1);
+            }
+        }
+    }
+
+    /**
+     * Print out the map
+     */
+    public void printMap() {
+        for (Entry<String, Integer> entry: wordFreq.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
         }
     }
 
@@ -53,9 +81,13 @@ public class extractMessage {
      */
     public static void main(String[] args) {
         AccessDir newDir = new AccessDir("");
-        Path dir = Paths.get(newDir.getDirName(0));
-        //go into a specific dir and get the content from "message_1.json"
-        extractMessage em = newDir.getContentFromInbox(dir);
-        em.getMessages(MESSAGES);
+        extractMessage em = null;
+        for (int i = 0; i < newDir.length(); i++) {
+            Path dir = Paths.get(newDir.getDirName(i));
+            //go into a specific dir and get the content from "message_1.json"
+            em = newDir.getContentFromInbox(dir);
+            em.getMessages(MESSAGES);
+        }
+        em.printMap();
     }
 }
