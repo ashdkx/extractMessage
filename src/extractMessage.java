@@ -1,19 +1,19 @@
 import java.io.FileReader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
 
 public class extractMessage {
     private static final String MESSAGES = "messages";
     private String aMessage;
     private Map<String, Integer> wordFreq;
+    private ConnectDB db;
 
     /* JSON object */
     private JSONObject js;
@@ -57,13 +57,43 @@ public class extractMessage {
      */
     public void getFreq(String input) {
         String[] brokeUpString = input.split(" ");
-        for (String word: brokeUpString) {
-            if (wordFreq.containsKey(word)) {
-                wordFreq.replace(word, wordFreq.get(word), wordFreq.get(word) +1);
-            } else {
-                wordFreq.put(word, 1);
+        try {
+            for (String word : brokeUpString) {
+                if (wordFreq.containsKey(word)) {
+                    wordFreq.replace(word, wordFreq.get(word), wordFreq.get(word) + 1);
+                } else {
+                    wordFreq.put(word, 1);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * Query all the data in the tree into a database
+     * @throws SQLException
+     */
+    public void toDb() throws SQLException {
+        db = new ConnectDB();
+        db.createDB("theWordBank");
+        db.deleteTable("theWordFreqTable");
+        db.createTable("theWordFreqTable");
+        for (Entry<String, Integer> entry: wordFreq.entrySet()) {
+            String word = replaceApos(entry.getKey());
+            db.insert(word, entry.getValue());
+        }
+    }
+
+    /**
+     * Helper method to ensure the input string doesn't violate the reserved characters in SQL
+     * @param word
+     * @return
+     */
+    private String replaceApos(String word) {
+        if (word.contains("'")) word = word.replaceAll("'", "''");
+        if (word.contains("\\")) word = word.replaceAll("\\\\", "");
+        return word;
     }
 
     /**
@@ -72,6 +102,17 @@ public class extractMessage {
     public void printMap() {
         for (Entry<String, Integer> entry: wordFreq.entrySet()) {
             System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    /**
+     * Print from the database
+     */
+    public void printTable() {
+        try {
+            db.printTable(db.getConnection());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,6 +129,15 @@ public class extractMessage {
             em = newDir.getContentFromInbox(dir);
             em.getMessages(MESSAGES);
         }
+        try {
+            assert em != null;
+            em.toDb();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Print from local table");
         em.printMap();
+        System.out.println("Print from database");
+        em.printTable();
     }
 }

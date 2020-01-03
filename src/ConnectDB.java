@@ -8,10 +8,14 @@ public class ConnectDB {
 
     private String dbName;
     private String tableName;
-    Connection connection;
+    private Connection connection;
 
-    public ConnectDB() throws SQLException {
-        connection = DriverManager.getConnection(url, user, pword);
+    public ConnectDB() {
+        try {
+            connection = DriverManager.getConnection(url, user, pword);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void createDB(String dbName) throws SQLException {
@@ -36,9 +40,14 @@ public class ConnectDB {
         sqlCmd(connection, cmd);
     }
 
+    public void deleteTable(String tableName) throws SQLException {
+        String drop = "DROP TABLE IF EXISTS " + dbName + "." + tableName;
+        sqlCmd(connection, drop);
+    }
+
     public void printTable(Connection connection) throws SQLException {
         String print = "SELECT * FROM " + dbName + "." + tableName;
-        Statement statement = connection.createStatement();
+        PreparedStatement statement = connection.prepareStatement(print);
         ResultSet results = statement.executeQuery(print);
 
         while (results.next()) {
@@ -65,22 +74,32 @@ public class ConnectDB {
         return tableName;
     }
 
+    /*
     public static void main(String[] args) {
-        String createdb = "CREATE DATABASE IF NOT EXISTS wordBank;";
-        String createTable = "CREATE TABLE IF NOT EXISTS wordbank.wordFreq(word varchar(255) not null, frequency int not null)";
-        String insert = "INSERT INTO wordbank.wordFreq(word, frequency) VALUES ('Ash', 2)";
         ConnectDB db;
         try {
             db = new ConnectDB();
             db.createDB("wordBank");
+            db.deleteTable("wordFreq");
             db.createTable("wordFreq");
-            db.insert("hungry", 3);
+            String input = "Chuc not' cuoi' ngay\\ :D";
+            String[] test = input.split(" ");
+            for (String word: test) {
+                if (word.contains("'")) word = word.replaceAll("'", "''");
+                if (word.contains("\\")) word = word.replaceAll("\\\\", "");
+                db.insert(word, 99);
+            }
+
+            //db.insert("Nah, If I don''t having anything to say, I just don''t.", 3);
             db.printTable(db.getConnection());
-            db.update(db.getConnection(), "ash", 9);
+            //db.update(db.getConnection(), "Nah, If I don''t having anything to say, I just don''t.", 9);
             db.printTable(db.getConnection());
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+     */
+
 }
