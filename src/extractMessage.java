@@ -1,11 +1,19 @@
 import java.io.FileReader;
 import java.nio.file.*;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import jdk.jfr.Category;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 
@@ -96,6 +104,15 @@ public class extractMessage {
         return word;
     }
 
+    public DefaultCategoryDataset toDataset() {
+        DefaultCategoryDataset list = new DefaultCategoryDataset();
+        for (Entry<String, Integer> entry: wordFreq.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+            list.addValue(entry.getValue(), entry.getKey(), "word");
+        }
+        return list;
+    }
+
     /**
      * Print out the map
      */
@@ -139,5 +156,9 @@ public class extractMessage {
         em.printMap();
         System.out.println("Print from database");
         em.printTable();
+
+        DefaultCategoryDataset list = em.toDataset();
+        Graphing chart = new Graphing("Frequency", list);
+        chart.graph();
     }
 }

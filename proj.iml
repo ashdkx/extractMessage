@@ -9,5 +9,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="mysql:mysql-connector-java:8.0.18" level="project" />
+    <orderEntry type="library" name="com.io7m.jgrapht:jgrapht-core:1.2.1-MODULARIZED" level="project" />
+    <orderEntry type="library" name="com.faendir.vaadin:jfreechart-flow:1.1.6" level="project" />
+    <orderEntry type="library" name="com.kryshchuk.maven.plugins:jfreechart-maven-plugin:1.1.4" level="project" />
   </component>
 </module>
